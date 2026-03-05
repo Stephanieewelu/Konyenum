@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Second Me Academy — Clone Yourself. Scale Your Income.</title>
+  <meta name="description" content="Build a digital twin or custom avatar that looks however you want. Create premium, scroll-stopping content and turn attention into income — without being on camera every day." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0a0a0a;
+      --ink:     #111111;
+      --charcoal:#1e1e1e;
+      --muted:   #2a2a2a;
+      --gold:    #c9a96e;
+      --gold-lt: #e0c48a;
+      --cream:   #f5efe6;
+      --white:   #fdfaf6;
+      --text:    #d4cfc9;
+      --text-dim:#7a756e;
+      --serif:   'Cormorant Garamond', Georgia, serif;
+      --sans:    'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── UTILITIES ─────────────────────────────────── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    .container--wide { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    .gold { color: var(--gold); }
+    .italic { font-style: italic; }
+    .serif { font-family: var(--serif); }
+
+    .divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto;
+    }
+
+    .section { padding: 96px 0; }
+    .section--tight { padding: 64px 0; }
+
+    /* ── NAV ───────────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,169,110,0.12);
+    }
+
+    .nav__logo {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--gold-lt);
+      text-decoration: none;
+    }
+
+    .nav__cta {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 10px 22px;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav__cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+    /* ── HERO ──────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,169,110,0.07) 0%, transparent 70%),
+        var(--black);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.3), transparent);
+    }
+
+    .hero__eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+
+    .hero__headline {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--white);
+      max-width: 820px;
+      margin-bottom: 12px;
+    }
+
+    .hero__headline em {
+      font-style: italic;
+      color: var(--gold-lt);
+      font-weight: 300;
+    }
+
+    .hero__sub {
+      font-family: var(--serif);
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 20px auto 48px;
+    }
+
+    .hero__cta-group { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+    .btn--primary {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      padding: 18px 48px;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(201,169,110,0.25);
+    }
+    .btn--primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 36px rgba(201,169,110,0.4);
+    }
+
+    .hero__note {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── TAGLINE TRIO ──────────────────────────────── */
+    .tagline-trio {
+      padding: 56px 24px;
+      background: var(--charcoal);
+      border-top: 1px solid rgba(201,169,110,0.1);
+      border-bottom: 1px solid rgba(201,169,110,0.1);
+    }
+
+    .tagline-trio__inner {
+      display: flex;
+      justify-content: center;
+      gap: 56px;
+      flex-wrap: wrap;
+    }
+
+    .tagline-trio__item {
+      text-align: center;
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--gold-lt);
+      letter-spacing: 0.02em;
+    }
+
+    .tagline-trio__item span {
+      display: block;
+      font-family: var(--sans);
+      font-style: normal;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* ── STORY ─────────────────────────────────────── */
+    .story { background: var(--ink); }
+
+    .story__inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .story__greeting {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-style: italic;
+      color: var(--gold-lt);
+      margin-bottom: 32px;
+    }
+
+    .story__body {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--text);
+    }
+
+    .story__body p { margin-bottom: 24px; }
+
+    .story__body strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .story__pull {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-style: italic;
+      color: var(--gold);
+      border-left: 2px solid var(--gold);
+      padding: 20px 32px;
+      margin: 48px 0;
+      text-align: left;
+    }
+
+    /* ── FOR WHO ───────────────────────────────────── */
+    .for-who { background: var(--black); }
+
+    .section__label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section__title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 300;
+      color: var(--white);
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section__intro {
+      font-size: 1rem;
+      color: var(--text-dim);
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 64px;
+    }
+
+    .for-who__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2px;
+    }
+
+    .for-who__item {
+      background: var(--charcoal);
+      padding: 28px 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: background 0.2s;
+    }
+
+    .for-who__item:hover { background: var(--muted); }
+
+    .for-who__check {
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      margin-top: 3px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .for-who__check::after {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .for-who__text {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ── INSIDE ────────────────────────────────────── */
+    .inside { background: var(--ink); }
+
+    .inside__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .inside__card {
+      background: var(--charcoal);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: 4px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .inside__card:hover {
+      border-color: rgba(201,169,110,0.35);
+      transform: translateY(-3px);
+    }
+
+    .inside__card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .inside__card:hover::before { opacity: 1; }
+
+    .inside__num {
+      font-family: var(--serif);
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(201,169,110,0.2);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .inside__card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .inside__card-body {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* ── OUTCOME STRIP ─────────────────────────────── */
+    .outcomes {
+      background: linear-gradient(135deg, #1a1306 0%, #0f0e0a 50%, #141008 100%);
+      border-top: 1px solid rgba(201,169,110,0.2);
+      border-bottom: 1px solid rgba(201,169,110,0.2);
+    }
+
+    .outcomes__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0;
+    }
+
+    .outcomes__item {
+      padding: 48px 32px;
+      text-align: center;
+      border-right: 1px solid rgba(201,169,110,0.1);
+    }
+
+    .outcomes__item:last-child { border-right: none; }
+
+    .outcomes__stat {
+      font-family: var(--serif);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .outcomes__label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── PILLAR ROWS ───────────────────────────────── */
+    .pillars { background: var(--black); }
+
+    .pillar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid rgba(201,169,110,0.08);
+    }
+
+    .pillar:last-child { border-bottom: none; }
+
+    .pillar__visual {
+      background: var(--charcoal);
+      min-height: 320px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pillar--reverse .pillar__visual { order: 2; }
+
+    .pillar__icon-wrap {
+      text-align: center;
+    }
+
+    .pillar__icon {
+      font-size: 4rem;
+      opacity: 0.15;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .pillar__icon-label {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-style: italic;
+      color: rgba(201,169,110,0.4);
+    }
+
+    .pillar__content {
+      padding: 64px 56px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .pillar__tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .pillar__title {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .pillar__body {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.85;
+    }
+
+    /* ── MANIFESTO ─────────────────────────────────── */
+    .manifesto {
+      background: var(--charcoal);
+      padding: 96px 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .manifesto::before,
+    .manifesto::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.25), transparent);
+    }
+    .manifesto::before { top: 0; }
+    .manifesto::after { bottom: 0; }
+
+    .manifesto__text {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--white);
+      max-width: 760px;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
+
+    .manifesto__text em { color: var(--gold-lt); }
+
+    /* ── TESTIMONIAL / VOICE ───────────────────────── */
+    .voices { background: var(--ink); }
+
+    .voices__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .voice__card {
+      background: var(--charcoal);
+      border-radius: 4px;
+      padding: 36px 32px;
+      border-left: 2px solid var(--gold);
+    }
+
+    .voice__quote {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .voice__name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .voice__role {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ── FAQ ───────────────────────────────────────── */
+    .faq { background: var(--black); }
+
+    .faq__list { max-width: 680px; margin: 64px auto 0; }
+
+    .faq__item {
+      border-bottom: 1px solid rgba(201,169,110,0.1);
+      padding: 28px 0;
+    }
+
+    .faq__item:first-child { border-top: 1px solid rgba(201,169,110,0.1); }
+
+    .faq__q {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .faq__a {
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    /* ── CTA CLOSE ─────────────────────────────────── */
+    .cta-close {
+      background:
+        radial-gradient(ellipse 80% 80% at 50% 100%, rgba(201,169,110,0.09) 0%, transparent 70%),
+        var(--charcoal);
+      padding: 120px 24px;
+      text-align: center;
+    }
+
+    .cta-close__eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .cta-close__headline {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 6vw, 4.5rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 24px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-close__headline em {
+      font-style: italic;
+      color: var(--gold-lt);
+    }
+
+    .cta-close__sub {
+      font-size: 1rem;
+      color: var(--text-dim);
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+
+    /* ── FOOTER ────────────────────────────────────── */
+    .footer {
+      background: var(--black);
+      border-top: 1px solid rgba(201,169,110,0.1);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .footer__logo {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .footer__copy {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────── */
+    @media (max-width: 768px) {
+      .pillar {
+        grid-template-columns: 1fr;
+      }
+      .pillar--reverse .pillar__visual { order: 0; }
+      .pillar__visual { min-height: 180px; }
+      .pillar__content { padding: 40px 28px; }
+
+      .tagline-trio__inner { gap: 32px; }
+
+      .outcomes__item { border-right: none; border-bottom: 1px solid rgba(201,169,110,0.1); }
+      .outcomes__item:last-child { border-bottom: none; }
+
+      .nav__logo { font-size: 1rem; }
+    }
+
+    @media (max-width: 480px) {
+      .section { padding: 72px 0; }
+      .hero { padding: 100px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="#" class="nav__logo">Second Me Academy</a>
+    <a href="#enroll" class="nav__cta">Enroll Now</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero__eyebrow">Second Me Academy</p>
+    <h1 class="hero__headline">
+      Clone Yourself.<br />
+      <em>Scale Your Income.</em>
+    </h1>
+    <p class="hero__sub">
+      Build a digital twin or custom avatar that looks however you want — create premium, scroll-stopping content and turn attention into income without being on camera every day.
+    </p>
+    <div class="hero__cta-group">
+      <a href="#enroll" class="btn--primary">Join Second Me Academy</a>
+      <span class="hero__note">Premium access · Immediate entry · No cameras required</span>
+    </div>
+  </section>
+
+  <!-- TAGLINE TRIO -->
+  <div class="tagline-trio">
+    <div class="tagline-trio__inner">
+      <div class="tagline-trio__item">
+        Pretty pays.
+        <span>First principle</span>
+      </div>
+      <div class="tagline-trio__item">
+        Quality converts.
+        <span>Second principle</span>
+      </div>
+      <div class="tagline-trio__item">
+        Skill keeps the money coming.
+        <span>Third principle</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <section class="section story">
+    <div class="story__inner">
+      <p class="story__greeting">Heyy!!!</p>
+      <div class="story__body">
+        <p>
+          I built this system for <strong>the version of me who was a new mom, running businesses, and still needed to show up online looking high-value</strong> — without exhausting myself.
+        </p>
+        <p>
+          Content used to take me hours. The lighting, the angles, the editing, the burnout that came right after hitting post. All of it.
+        </p>
+        <p>
+          Then I found a different way. I turned content into an asset instead of a chore. And once I did, everything changed — the time, the income, the creative freedom.
+        </p>
+        <blockquote class="story__pull">
+          "Money loves speed. Now content takes me minutes, not hours — and it still looks luxury."
+        </blockquote>
+        <p>
+          Now I teach other people how to do the same thing. This is the same system I use to build digital presence, generate leads, and stack income streams — all without being on camera every single day.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR WHO -->
+  <section class="section for-who">
+    <div class="container--wide">
+      <p class="section__label">This is for you if…</p>
+      <h2 class="section__title">You want more than<br /><em class="italic gold">motivation</em></h2>
+      <p class="section__intro">This program is built for people who are done working hard for low returns. You want leverage. Here's what that looks like.</p>
+
+      <div class="for-who__grid">
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">More money, not more motivation</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">Multiple income streams that don't require your daily presence</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">Digital leverage — assets that work while you rest</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">A polished online presence without burnout</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">High-quality visuals that attract leads automatically</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">A real, monetizable skill you can sell to others</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">A future-proof way to stay relevant and paid</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">To stop posting for free and start building assets</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">Luxury-level visuals without luxury production budgets</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">To build a personal brand, business, or influencer page</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">To monetize your identity and your attention</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">To control AI instead of being replaced by it</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">To be an early mover in the future of content</span>
+        </div>
+        <div class="for-who__item">
+          <div class="for-who__check"></div>
+          <span class="for-who__text">To look high-value online without spending every hour proving it</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOMES STRIP -->
+  <div class="outcomes">
+    <div class="outcomes__grid container--wide">
+      <div class="outcomes__item">
+        <div class="outcomes__stat">2×</div>
+        <div class="outcomes__label">Faster Content Production</div>
+      </div>
+      <div class="outcomes__item">
+        <div class="outcomes__stat">0</div>
+        <div class="outcomes__label">Cameras Required</div>
+      </div>
+      <div class="outcomes__item">
+        <div class="outcomes__stat">24/7</div>
+        <div class="outcomes__label">Your Twin Works For You</div>
+      </div>
+      <div class="outcomes__item">
+        <div class="outcomes__stat">∞</div>
+        <div class="outcomes__label">Income Stream Potential</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIDE THE PROGRAM -->
+  <section class="section inside">
+    <div class="container--wide">
+      <p class="section__label">Inside Second Me Academy</p>
+      <h2 class="section__title">Everything you need to<br /><em class="italic gold">build, brand &amp; monetize</em></h2>
+      <p class="section__intro">Ten core skills. One complete system. Yours to keep and resell.</p>
+
+      <div class="inside__grid">
+        <div class="inside__card">
+          <div class="inside__num">01</div>
+          <div class="inside__card-title">Build Your Digital Twin</div>
+          <div class="inside__card-body">Clone yourself into a high-end digital avatar using the exact tools professionals use. Your twin, your rules — styled however you want.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">02</div>
+          <div class="inside__card-title">Custom Avatar From Scratch</div>
+          <div class="inside__card-body">Don't want to use your real face? Build a fully custom avatar that represents your brand aesthetic — no selfies, no studios.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">03</div>
+          <div class="inside__card-title">Scroll-Stopping Imagery</div>
+          <div class="inside__card-body">Create premium images that stop thumbs cold. Learn the visual triggers that drive saves, shares, and sales.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">04</div>
+          <div class="inside__card-title">Build a Luxury Online Presence</div>
+          <div class="inside__card-body">Design a digital aesthetic that signals quality and attracts premium clients, brand deals, and high-ticket buyers without a word.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">05</div>
+          <div class="inside__card-title">Talking, Selling Brand Asset</div>
+          <div class="inside__card-body">Turn your twin into a video-capable, talking brand asset that promotes products, runs ads, and closes deals — on autopilot.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">06</div>
+          <div class="inside__card-title">Weeks of Content in Minutes</div>
+          <div class="inside__card-body">Batch-create an entire content calendar in one sitting. Post consistently without the mental weight of showing up every day.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">07</div>
+          <div class="inside__card-title">Fix Bad AI into Flawless Visuals</div>
+          <div class="inside__card-body">AI-generated images often look… off. Learn the exact fixes that turn mediocre outputs into magazine-quality content.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">08</div>
+          <div class="inside__card-title">Monetize Your Identity</div>
+          <div class="inside__card-body">Your face, your story, your vibe — all of it has monetary value. Learn how to package and sell your identity as a digital product.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">09</div>
+          <div class="inside__card-title">Promote Products &amp; Digital Offers</div>
+          <div class="inside__card-body">Use your twin to market affiliate products, digital courses, services, and brand partnerships at scale.</div>
+        </div>
+        <div class="inside__card">
+          <div class="inside__num">10</div>
+          <div class="inside__card-title">Build Scalable Digital Leverage</div>
+          <div class="inside__card-body">Stop trading time for money. Build systems, assets, and income streams that scale without adding hours to your day.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLAR SECTIONS -->
+  <section class="section--tight pillars">
+    <div class="pillar">
+      <div class="pillar__visual">
+        <div class="pillar__icon-wrap">
+          <span class="pillar__icon">◈</span>
+          <span class="pillar__icon-label">Identity · Elevated</span>
+        </div>
+      </div>
+      <div class="pillar__content">
+        <p class="pillar__tag">Module 1 — Identity</p>
+        <h3 class="pillar__title">Your presence,<br />fully owned</h3>
+        <p class="pillar__body">
+          Most people give away their best content for free and hope the algorithm rewards them. That ends here. Your digital identity becomes a business asset — one you control, license, and monetize on your own terms.
+        </p>
+      </div>
+    </div>
+
+    <div class="pillar pillar--reverse">
+      <div class="pillar__visual">
+        <div class="pillar__icon-wrap">
+          <span class="pillar__icon">⬡</span>
+          <span class="pillar__icon-label">Content · Automated</span>
+        </div>
+      </div>
+      <div class="pillar__content">
+        <p class="pillar__tag">Module 2 — Content</p>
+        <h3 class="pillar__title">Weeks of content<br />in one session</h3>
+        <p class="pillar__body">
+          The content hamster wheel is real — and exhausting. Inside Second Me Academy you'll learn to create batches of high-quality, on-brand visuals and video in a single sitting. Post consistently. Burn out never.
+        </p>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <div class="pillar__visual">
+        <div class="pillar__icon-wrap">
+          <span class="pillar__icon">◎</span>
+          <span class="pillar__icon-label">Income · Stacked</span>
+        </div>
+      </div>
+      <div class="pillar__content">
+        <p class="pillar__tag">Module 3 — Monetization</p>
+        <h3 class="pillar__title">Turn content<br />into cash</h3>
+        <p class="pillar__body">
+          Attention without conversion is just entertainment. Learn how to attach real revenue to every piece of content you create — through affiliate deals, digital products, brand partnerships, and service offerings.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <div class="manifesto">
+    <p class="manifesto__text">
+      "This is not about posting for fun.<br />
+      This is about building <em>assets that pay you.</em>"
+    </p>
+  </div>
+
+  <!-- VOICES -->
+  <section class="section voices">
+    <div class="container--wide">
+      <p class="section__label">Community Wins</p>
+      <h2 class="section__title">Real people.<br /><em class="italic gold">Real results.</em></h2>
+
+      <div class="voices__grid">
+        <div class="voice__card">
+          <p class="voice__quote">"I used to spend 3 hours on one reel. Now I batch a full week of content in under 90 minutes and it looks better than anything I was making before."</p>
+          <div class="voice__name">Monique A.</div>
+          <div class="voice__role">Digital creator &amp; mom of two</div>
+        </div>
+        <div class="voice__card">
+          <p class="voice__quote">"I was terrified of cameras. Now I have an entire brand presence built on a custom avatar and I've landed two brand deals without showing my face once."</p>
+          <div class="voice__name">Tamara D.</div>
+          <div class="voice__role">Online coach, service-based business</div>
+        </div>
+        <div class="voice__card">
+          <p class="voice__quote">"The monetization module alone was worth the investment. I built a digital product from my twin and made my money back in week one."</p>
+          <div class="voice__name">Ife W.</div>
+          <div class="voice__role">Course creator &amp; affiliate marketer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq">
+    <div class="container">
+      <p class="section__label">Common Questions</p>
+      <h2 class="section__title">Your questions,<br /><em class="italic gold">answered honestly</em></h2>
+
+      <div class="faq__list">
+        <div class="faq__item">
+          <p class="faq__q">Do I need to be tech-savvy to do this?</p>
+          <p class="faq__a">No. If you can use a smartphone and follow a tutorial, you can do this. Everything is taught step-by-step with zero assumed knowledge.</p>
+        </div>
+        <div class="faq__item">
+          <p class="faq__q">Do I need expensive software or equipment?</p>
+          <p class="faq__a">No cameras, studios, or costly subscriptions required. Most of what you need is free or low-cost. The tools are accessible — the skill is what's valuable.</p>
+        </div>
+        <div class="faq__item">
+          <p class="faq__q">What if I don't want to use my real face?</p>
+          <p class="faq__a">That's exactly why the custom avatar track exists. You can build a fully original character that represents your brand without any photos of yourself.</p>
+        </div>
+        <div class="faq__item">
+          <p class="faq__q">How quickly can I start making money?</p>
+          <p class="faq__a">Some students generate their first income within days of completing the monetization module. Results depend on your effort, existing audience, and execution — but the tools are designed for speed.</p>
+        </div>
+        <div class="faq__item">
+          <p class="faq__q">Is this a skill I can sell to clients?</p>
+          <p class="faq__a">Yes. Digital twin creation is a growing service category. Many students use this program to launch freelance or agency offerings targeting brands, coaches, and creators.</p>
+        </div>
+        <div class="faq__item">
+          <p class="faq__q">Will this still be relevant in a year?</p>
+          <p class="faq__a">AI content is accelerating, not slowing down. People who understand how to use it and make it look premium are becoming increasingly rare — and increasingly paid. Early movers win.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA CLOSE -->
+  <section class="cta-close" id="enroll">
+    <p class="cta-close__eyebrow">The future of content is now</p>
+    <h2 class="cta-close__headline">
+      Build your second self.<br />
+      <em>Get paid for it.</em>
+    </h2>
+    <p class="cta-close__sub">
+      Join Second Me Academy and gain the skills, tools, and system to create a luxury digital presence, generate content in minutes, and build income that doesn't depend on you showing up every day.
+    </p>
+    <a href="#" class="btn--primary">Yes — I'm Ready to Enroll</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span class="footer__logo">Second Me Academy</span>
+    <p class="footer__copy">&copy; 2025 Second Me Academy. All rights reserved. Build assets. Stack leverage. Get paid.</p>
+  </footer>
+
+</body>
+</html>
