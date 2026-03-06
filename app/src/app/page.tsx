@@ -4,8 +4,9 @@ import { useState, useCallback } from "react";
 import ImageUpload from "@/components/ImageUpload";
 import StyleSelector from "@/components/StyleSelector";
 import GeneratedGallery from "@/components/GeneratedGallery";
+import BroadcastPipeline from "@/components/BroadcastPipeline";
 
-type Tab = "twin" | "avatar" | "content" | "fix";
+type Tab = "twin" | "avatar" | "content" | "fix" | "cast";
 
 interface GalleryImage {
   src: string;
@@ -43,6 +44,7 @@ export default function Home() {
     { id: "avatar", label: "FORGE", tag: "Build Avatar" },
     { id: "content", label: "SIGNAL", tag: "Content Engine" },
     { id: "fix", label: "REPAIR", tag: "AI Fix" },
+    { id: "cast", label: "CAST", tag: "TikTok Pipeline" },
   ];
 
   const generateTwin = useCallback(async () => {
@@ -319,6 +321,31 @@ export default function Home() {
           </div>
         )}
       </div>
+
+        {/* ══════ CAST ══════ */}
+        {activeTab === "cast" && (
+          <div className="space-y-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-sm font-black tracking-[0.3em] glow-cyan">CAST</h2>
+                <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.3)" }}>
+                  Faceless TikTok AutoPoster — Gemini script · Edge TTS voice · Pexels footage · MoviePy captions
+                </p>
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
+                {["FREE", "FACELESS", "AUTO"].map(tag => (
+                  <span key={tag} className="text-[8px] font-black tracking-widest px-2 py-1 rounded"
+                    style={{ border: "1px solid rgba(0,240,255,0.2)", color: "rgba(0,240,255,0.5)", background: "rgba(0,240,255,0.04)" }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="glass rounded-xl p-6 border corner-bracket" style={{ borderColor: "rgba(0,240,255,0.12)" }}>
+              <BroadcastPipeline />
+            </div>
+          </div>
+        )}
 
       {/* ── Footer ── */}
       <footer className="relative border-t mt-20 py-8" style={{ borderColor: "rgba(0,240,255,0.08)", zIndex: 1 }}>
