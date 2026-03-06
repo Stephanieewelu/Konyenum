@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Second Me Academy — Digital Twin & Avatar Builder",
+  title: "AURA — Build Your Digital Identity",
   description:
-    "Build your digital twin or custom avatar. Create scroll-stopping content and turn attention into income using AI.",
+    "Create your digital twin, generate custom avatars, and produce AI-powered visual content. Your identity. Your frequency.",
 };
 
 export default function RootLayout({
@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased bg-[#0a0a0a] text-white">
+    <html lang="en">
+      <body className="antialiased">
         {children}
       </body>
     </html>

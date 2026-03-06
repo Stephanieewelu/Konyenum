@@ -18,18 +18,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Twin builder state
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
   const [twinPrompt, setTwinPrompt] = useState("");
   const [twinStyle, setTwinStyle] = useState("luxury");
   const [twinResults, setTwinResults] = useState<GalleryImage[]>([]);
 
-  // Avatar builder state
   const [avatarPrompt, setAvatarPrompt] = useState("");
   const [avatarStyle, setAvatarStyle] = useState("luxury");
   const [avatarResults, setAvatarResults] = useState<GalleryImage[]>([]);
 
-  // Content generator state
   const [contentAvatar, setContentAvatar] = useState<string | null>(null);
   const [contentType, setContentType] = useState("brand-lifestyle");
   const [contentNiche, setContentNiche] = useState("");
@@ -37,144 +34,89 @@ export default function Home() {
   const [contentCount, setContentCount] = useState(4);
   const [contentResults, setContentResults] = useState<GalleryImage[]>([]);
 
-  // Image fixer state
   const [fixImage, setFixImage] = useState<string | null>(null);
   const [fixPrompt, setFixPrompt] = useState("");
   const [fixResults, setFixResults] = useState<GalleryImage[]>([]);
 
-  const tabs: Array<{ id: Tab; label: string; desc: string }> = [
-    { id: "twin", label: "Digital Twin", desc: "Clone yourself from a photo" },
-    { id: "avatar", label: "Custom Avatar", desc: "Build from scratch" },
-    { id: "content", label: "Content Engine", desc: "Batch-generate content" },
-    { id: "fix", label: "AI Fixer", desc: "Fix bad AI images" },
+  const tabs: Array<{ id: Tab; label: string; tag: string }> = [
+    { id: "twin", label: "TWIN", tag: "Digital Clone" },
+    { id: "avatar", label: "FORGE", tag: "Build Avatar" },
+    { id: "content", label: "SIGNAL", tag: "Content Engine" },
+    { id: "fix", label: "REPAIR", tag: "AI Fix" },
   ];
 
   const generateTwin = useCallback(async () => {
-    if (!referenceImage) {
-      setError("Upload a reference photo first");
-      return;
-    }
-    setLoading(true);
-    setError("");
+    if (!referenceImage) { setError("Upload a reference photo first"); return; }
+    setLoading(true); setError("");
     try {
       const res = await fetch("/api/generate-avatar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: twinPrompt,
-          referenceImage,
-          style: twinStyle,
-          mode: "twin",
-        }),
+        body: JSON.stringify({ prompt: twinPrompt, referenceImage, style: twinStyle, mode: "twin" }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       if (data.images?.length) {
-        setTwinResults((prev) => [
-          ...data.images.map((src: string) => ({ src, caption: data.text })),
-          ...prev,
-        ]);
+        setTwinResults(prev => [...data.images.map((src: string) => ({ src, caption: data.text })), ...prev]);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Generation failed");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }, [referenceImage, twinPrompt, twinStyle]);
 
   const generateAvatar = useCallback(async () => {
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     try {
       const res = await fetch("/api/generate-avatar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: avatarPrompt || "A confident, attractive person perfect for a luxury personal brand",
-          style: avatarStyle,
-          mode: "custom",
-        }),
+        body: JSON.stringify({ prompt: avatarPrompt || "A powerful, mysterious figure with commanding presence", style: avatarStyle, mode: "custom" }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       if (data.images?.length) {
-        setAvatarResults((prev) => [
-          ...data.images.map((src: string) => ({ src, caption: data.text })),
-          ...prev,
-        ]);
+        setAvatarResults(prev => [...data.images.map((src: string) => ({ src, caption: data.text })), ...prev]);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Generation failed");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }, [avatarPrompt, avatarStyle]);
 
   const generateContent = useCallback(async () => {
-    setLoading(true);
-    setError("");
+    setLoading(true); setError("");
     try {
       const res = await fetch("/api/generate-content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          avatarImage: contentAvatar,
-          contentType,
-          niche: contentNiche,
-          tone: contentTone,
-          count: contentCount,
-        }),
+        body: JSON.stringify({ avatarImage: contentAvatar, contentType, niche: contentNiche, tone: contentTone, count: contentCount }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       if (data.content?.length) {
-        setContentResults((prev) => [
-          ...data.content.map(
-            (c: { image: string; caption: string; scene: string }) => ({
-              src: c.image,
-              caption: c.caption,
-              scene: c.scene,
-            })
-          ),
-          ...prev,
-        ]);
+        setContentResults(prev => [...data.content.map((c: { image: string; caption: string; scene: string }) => ({ src: c.image, caption: c.caption, scene: c.scene })), ...prev]);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Generation failed");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }, [contentAvatar, contentType, contentNiche, contentTone, contentCount]);
 
   const fixAIImage = useCallback(async () => {
-    if (!fixImage) {
-      setError("Upload an image to fix");
-      return;
-    }
-    setLoading(true);
-    setError("");
+    if (!fixImage) { setError("Upload an image to fix"); return; }
+    setLoading(true); setError("");
     try {
       const res = await fetch("/api/edit-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image: fixImage,
-          editPrompt: fixPrompt || "Fix AI artifacts, improve realism and quality",
-        }),
+        body: JSON.stringify({ image: fixImage, editPrompt: fixPrompt || "Fix AI artifacts, improve realism and quality" }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       if (data.images?.length) {
-        setFixResults((prev) => [
-          ...data.images.map((src: string) => ({ src, caption: data.text })),
-          ...prev,
-        ]);
+        setFixResults(prev => [...data.images.map((src: string) => ({ src, caption: data.text })), ...prev]);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Fix failed");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }, [fixImage, fixPrompt]);
 
   const handleEditImage = (imageSrc: string) => {
@@ -183,362 +125,270 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-[#2a2a2a] bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight">
-              <span className="text-[#c9a96e]">Second Me</span> Academy
-            </h1>
-            <p className="text-xs text-[#7a756e] mt-0.5">
-              Digital Twin & Avatar Builder
-            </p>
+    <div className="relative min-h-screen" style={{ zIndex: 1 }}>
+
+      {/* Ambient orbs */}
+      <div className="fixed top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(0,240,255,0.06) 0%, transparent 70%)", zIndex: 0 }} />
+      <div className="fixed bottom-[-200px] right-[-200px] w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(255,0,168,0.05) 0%, transparent 70%)", zIndex: 0 }} />
+
+      {/* ── Header ── */}
+      <header className="sticky top-0 z-50 border-b" style={{ borderColor: "rgba(0,240,255,0.1)", background: "rgba(0,0,5,0.85)", backdropFilter: "blur(20px)" }}>
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Logo mark */}
+            <div className="relative w-8 h-8">
+              <div className="absolute inset-0 border border-[#00f0ff] rotate-45"
+                style={{ boxShadow: "0 0 10px rgba(0,240,255,0.4)", opacity: 0.8 }} />
+              <div className="absolute inset-[3px] border border-[#ff00a8] rotate-45"
+                style={{ boxShadow: "0 0 6px rgba(255,0,168,0.4)", opacity: 0.6 }} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-[0.2em] glow-cyan">AURA</h1>
+              <p className="text-[9px] tracking-[0.3em] uppercase" style={{ color: "rgba(255,255,255,0.3)" }}>
+                Your Identity. Your Frequency.
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-            <span className="text-xs text-[#7a756e]">Gemini API</span>
+          <div className="flex items-center gap-2">
+            <span className="pulse-glow w-1.5 h-1.5 rounded-full bg-[#00f0ff]"
+              style={{ boxShadow: "0 0 6px #00f0ff" }} />
+            <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(0,240,255,0.6)" }}>
+              Gemini Live
+            </span>
           </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Tab Navigation */}
-        <div className="flex gap-1 bg-[#141414] rounded-xl p-1 mb-8">
-          {tabs.map((tab) => (
+      <div className="relative max-w-6xl mx-auto px-6 py-8" style={{ zIndex: 1 }}>
+
+        {/* ── Tab nav ── */}
+        <div className="flex gap-2 mb-8">
+          {tabs.map(tab => (
             <button
               key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setError("");
-              }}
-              className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
-                activeTab === tab.id
-                  ? "bg-[#c9a96e] text-black"
-                  : "text-[#7a756e] hover:text-white hover:bg-[#1e1e1e]"
-              }`}
+              onClick={() => { setActiveTab(tab.id); setError(""); }}
+              className={`flex-1 py-3 px-2 rounded border transition-all ${activeTab === tab.id ? "tab-active border-[#00f0ff]" : "border-transparent glass hover:border-[rgba(0,240,255,0.2)]"}`}
             >
-              <div>{tab.label}</div>
-              <div
-                className={`text-[10px] mt-0.5 ${
-                  activeTab === tab.id ? "text-black/60" : "opacity-50"
-                }`}
-              >
-                {tab.desc}
+              <div className={`text-xs font-black tracking-[0.2em] ${activeTab === tab.id ? "text-[#00f0ff]" : "text-white/40"}`}>
+                {tab.label}
+              </div>
+              <div className={`text-[9px] tracking-[0.1em] mt-0.5 ${activeTab === tab.id ? "text-[rgba(0,240,255,0.6)]" : "text-white/20"}`}>
+                {tab.tag}
               </div>
             </button>
           ))}
         </div>
 
-        {/* Error Display */}
+        {/* ── Error ── */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-center justify-between">
-            <span>{error}</span>
-            <button onClick={() => setError("")} className="text-red-400/60 hover:text-red-400">
-              x
-            </button>
+          <div className="mb-6 px-4 py-3 rounded border border-[#ff00a8]/30 text-sm flex items-center justify-between"
+            style={{ background: "rgba(255,0,168,0.06)", color: "#ff6eb8" }}>
+            <span>⚠ {error}</span>
+            <button onClick={() => setError("")} className="opacity-50 hover:opacity-100 text-lg leading-none">×</button>
           </div>
         )}
 
-        {/* DIGITAL TWIN TAB */}
+        {/* ══════ TWIN ══════ */}
         {activeTab === "twin" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-[#141414] rounded-xl p-6 border border-[#2a2a2a] space-y-6">
-                <div>
-                  <h2 className="text-lg font-semibold mb-1">Build Your Digital Twin</h2>
-                  <p className="text-xs text-[#7a756e]">
-                    Upload your photo and generate new versions of yourself in any style, outfit, or setting.
-                  </p>
-                </div>
-
-                <ImageUpload
-                  onImageSelect={(img) => setReferenceImage(img || null)}
-                  currentImage={referenceImage}
-                  label="Your reference photo"
-                />
-
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <Panel title="TWIN" subtitle="Replicate yourself across any dimension">
+                <ImageUpload onImageSelect={img => setReferenceImage(img || null)} currentImage={referenceImage} label="Reference Photo" />
                 <StyleSelector selected={twinStyle} onSelect={setTwinStyle} />
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    Describe the look (optional)
-                  </label>
-                  <textarea
-                    value={twinPrompt}
-                    onChange={(e) => setTwinPrompt(e.target.value)}
-                    placeholder="e.g., In a luxury office wearing a designer suit, golden hour lighting..."
-                    className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#555] focus:outline-none focus:border-[#c9a96e] resize-none"
-                    rows={3}
-                  />
-                </div>
-
-                <button
-                  onClick={generateTwin}
-                  disabled={loading || !referenceImage}
-                  className="w-full py-3 bg-[#c9a96e] text-black font-semibold rounded-lg hover:bg-[#e0c48a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
-                >
-                  {loading ? "Generating your twin..." : "Generate Digital Twin"}
-                </button>
-              </div>
+                <NeonTextarea value={twinPrompt} onChange={setTwinPrompt} placeholder="Describe the scene, look, or mood... e.g. boardroom, rooftop city, editorial shoot" />
+                <NeonButton onClick={generateTwin} loading={loading} disabled={!referenceImage}>
+                  {loading ? "GENERATING TWIN..." : "GENERATE TWIN"}
+                </NeonButton>
+              </Panel>
             </div>
-
             <div className="lg:col-span-2">
-              {loading && twinResults.length === 0 && <LoadingSkeleton />}
+              {loading && twinResults.length === 0 && <Skeleton />}
               <GeneratedGallery images={twinResults} onEdit={handleEditImage} />
-              {!loading && twinResults.length === 0 && (
-                <EmptyState message="Upload a photo and generate your first digital twin" />
-              )}
+              {!loading && twinResults.length === 0 && <Empty label="TWIN" msg="Upload a photo to begin replication" />}
             </div>
           </div>
         )}
 
-        {/* CUSTOM AVATAR TAB */}
+        {/* ══════ FORGE ══════ */}
         {activeTab === "avatar" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-[#141414] rounded-xl p-6 border border-[#2a2a2a] space-y-6">
-                <div>
-                  <h2 className="text-lg font-semibold mb-1">Create Custom Avatar</h2>
-                  <p className="text-xs text-[#7a756e]">
-                    Design a brand-new character from scratch. No photos needed — describe the look you want.
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    Describe your avatar
-                  </label>
-                  <textarea
-                    value={avatarPrompt}
-                    onChange={(e) => setAvatarPrompt(e.target.value)}
-                    placeholder="e.g., A confident Black woman in her 30s with locs, wearing a tailored blazer, warm brown skin, radiant smile..."
-                    className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#555] focus:outline-none focus:border-[#c9a96e] resize-none"
-                    rows={4}
-                  />
-                </div>
-
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <Panel title="FORGE" subtitle="Design an original entity from void">
+                <NeonTextarea
+                  value={avatarPrompt}
+                  onChange={setAvatarPrompt}
+                  placeholder="Describe your entity... e.g. a sharp-eyed woman with silver locs, dark skin, regal presence — cyberpunk fashion"
+                  rows={5}
+                />
                 <StyleSelector selected={avatarStyle} onSelect={setAvatarStyle} />
-
-                <button
-                  onClick={generateAvatar}
-                  disabled={loading}
-                  className="w-full py-3 bg-[#c9a96e] text-black font-semibold rounded-lg hover:bg-[#e0c48a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
-                >
-                  {loading ? "Creating avatar..." : "Generate Avatar"}
-                </button>
-              </div>
+                <NeonButton onClick={generateAvatar} loading={loading}>
+                  {loading ? "FORGING..." : "FORGE AVATAR"}
+                </NeonButton>
+              </Panel>
             </div>
-
             <div className="lg:col-span-2">
-              {loading && avatarResults.length === 0 && <LoadingSkeleton />}
+              {loading && avatarResults.length === 0 && <Skeleton />}
               <GeneratedGallery images={avatarResults} onEdit={handleEditImage} />
-              {!loading && avatarResults.length === 0 && (
-                <EmptyState message="Describe the avatar you want and hit generate" />
-              )}
+              {!loading && avatarResults.length === 0 && <Empty label="FORGE" msg="Describe your avatar to begin forging" />}
             </div>
           </div>
         )}
 
-        {/* CONTENT ENGINE TAB */}
+        {/* ══════ SIGNAL ══════ */}
         {activeTab === "content" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-[#141414] rounded-xl p-6 border border-[#2a2a2a] space-y-6">
-                <div>
-                  <h2 className="text-lg font-semibold mb-1">Content Engine</h2>
-                  <p className="text-xs text-[#7a756e]">
-                    Generate weeks of on-brand images + captions in one batch. Upload your twin or avatar for consistency.
-                  </p>
-                </div>
-
-                <ImageUpload
-                  onImageSelect={(img) => setContentAvatar(img || null)}
-                  currentImage={contentAvatar}
-                  label="Your avatar/twin (optional)"
-                />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <Panel title="SIGNAL" subtitle="Broadcast your presence — batch content in one pulse">
+                <ImageUpload onImageSelect={img => setContentAvatar(img || null)} currentImage={contentAvatar} label="Your Avatar / Twin (optional)" />
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    Content type
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <Label>Content Format</Label>
+                  <div className="grid grid-cols-2 gap-1.5">
                     {[
-                      { id: "brand-lifestyle", label: "Brand & Lifestyle" },
-                      { id: "product-promo", label: "Product Promo" },
-                      { id: "motivation", label: "Motivation" },
-                      { id: "social-media", label: "Social Media" },
-                    ].map((ct) => (
-                      <button
-                        key={ct.id}
-                        onClick={() => setContentType(ct.id)}
-                        className={`p-2 rounded-lg border text-xs font-medium transition-all ${
-                          contentType === ct.id
-                            ? "border-[#c9a96e] bg-[#c9a96e]/10 text-white"
-                            : "border-[#2a2a2a] text-[#7a756e] hover:border-[#3a3a3a]"
-                        }`}
-                      >
+                      { id: "brand-lifestyle", label: "Lifestyle" },
+                      { id: "product-promo", label: "Product" },
+                      { id: "motivation", label: "Mindset" },
+                      { id: "social-media", label: "Social" },
+                    ].map(ct => (
+                      <button key={ct.id} onClick={() => setContentType(ct.id)}
+                        className={`py-2 px-3 rounded border text-[10px] tracking-widest uppercase font-bold transition-all ${contentType === ct.id ? "tab-active border-[#00f0ff]" : "glass border-transparent hover:border-[rgba(0,240,255,0.2)] text-white/40"}`}>
                         {ct.label}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    Your niche (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={contentNiche}
-                    onChange={(e) => setContentNiche(e.target.value)}
-                    placeholder="e.g., fitness coaching, real estate, beauty..."
-                    className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#555] focus:outline-none focus:border-[#c9a96e]"
-                  />
+                <div className="space-y-1.5">
+                  <Label>Niche / Domain</Label>
+                  <input type="text" value={contentNiche} onChange={e => setContentNiche(e.target.value)}
+                    placeholder="e.g. fitness, crypto, real estate, beauty..."
+                    className="input-neon w-full rounded px-4 py-2.5 text-sm" />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    Tone
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {["confident", "warm", "bold", "elegant", "playful", "authoritative"].map(
-                      (t) => (
-                        <button
-                          key={t}
-                          onClick={() => setContentTone(t)}
-                          className={`p-2 rounded-lg border text-xs capitalize transition-all ${
-                            contentTone === t
-                              ? "border-[#c9a96e] bg-[#c9a96e]/10 text-white"
-                              : "border-[#2a2a2a] text-[#7a756e] hover:border-[#3a3a3a]"
-                          }`}
-                        >
-                          {t}
-                        </button>
-                      )
-                    )}
+                  <Label>Tone</Label>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {["confident", "warm", "bold", "elegant", "playful", "raw"].map(t => (
+                      <button key={t} onClick={() => setContentTone(t)}
+                        className={`py-1.5 rounded border text-[10px] tracking-widest uppercase font-bold transition-all capitalize ${contentTone === t ? "tab-active border-[#00f0ff]" : "glass border-transparent hover:border-[rgba(0,240,255,0.2)] text-white/40"}`}>
+                        {t}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    Number of images: {contentCount}
-                  </label>
-                  <input
-                    type="range"
-                    min={1}
-                    max={8}
-                    value={contentCount}
-                    onChange={(e) => setContentCount(Number(e.target.value))}
-                    className="w-full accent-[#c9a96e]"
-                  />
-                  <div className="flex justify-between text-xs text-[#555]">
-                    <span>1</span>
-                    <span>8</span>
-                  </div>
+                  <Label>Batch Size — <span className="text-[#00f0ff]">{contentCount} images</span></Label>
+                  <input type="range" min={1} max={8} value={contentCount} onChange={e => setContentCount(Number(e.target.value))}
+                    className="w-full accent-[#00f0ff]" />
                 </div>
 
-                <button
-                  onClick={generateContent}
-                  disabled={loading}
-                  className="w-full py-3 bg-[#c9a96e] text-black font-semibold rounded-lg hover:bg-[#e0c48a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
-                >
-                  {loading
-                    ? `Generating ${contentCount} images...`
-                    : `Generate ${contentCount} Content Pieces`}
-                </button>
-              </div>
+                <NeonButton onClick={generateContent} loading={loading}>
+                  {loading ? `TRANSMITTING ${contentCount}...` : `BROADCAST ${contentCount} SIGNALS`}
+                </NeonButton>
+              </Panel>
             </div>
-
             <div className="lg:col-span-2">
-              {loading && contentResults.length === 0 && <LoadingSkeleton count={contentCount} />}
+              {loading && contentResults.length === 0 && <Skeleton count={contentCount} />}
               <GeneratedGallery images={contentResults} onEdit={handleEditImage} />
-              {!loading && contentResults.length === 0 && (
-                <EmptyState message="Set your preferences and generate a batch of content" />
-              )}
+              {!loading && contentResults.length === 0 && <Empty label="SIGNAL" msg="Configure your broadcast and transmit" />}
             </div>
           </div>
         )}
 
-        {/* AI FIXER TAB */}
+        {/* ══════ REPAIR ══════ */}
         {activeTab === "fix" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-[#141414] rounded-xl p-6 border border-[#2a2a2a] space-y-6">
-                <div>
-                  <h2 className="text-lg font-semibold mb-1">Fix Bad AI Images</h2>
-                  <p className="text-xs text-[#7a756e]">
-                    Upload any AI-generated image and fix artifacts, weird hands, blurriness, or add improvements.
-                  </p>
-                </div>
-
-                <ImageUpload
-                  onImageSelect={(img) => setFixImage(img || null)}
-                  currentImage={fixImage}
-                  label="Image to fix"
-                />
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#c9a96e]">
-                    What to fix or improve
-                  </label>
-                  <textarea
-                    value={fixPrompt}
-                    onChange={(e) => setFixPrompt(e.target.value)}
-                    placeholder="e.g., Fix the hands, make the lighting warmer, remove background blur, improve face details..."
-                    className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm text-white placeholder:text-[#555] focus:outline-none focus:border-[#c9a96e] resize-none"
-                    rows={3}
-                  />
-                </div>
-
-                <button
-                  onClick={fixAIImage}
-                  disabled={loading || !fixImage}
-                  className="w-full py-3 bg-[#c9a96e] text-black font-semibold rounded-lg hover:bg-[#e0c48a] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
-                >
-                  {loading ? "Fixing image..." : "Fix & Enhance"}
-                </button>
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <Panel title="REPAIR" subtitle="Reconstruct corrupted outputs — fix hands, artifacts, noise">
+                <ImageUpload onImageSelect={img => setFixImage(img || null)} currentImage={fixImage} label="Damaged Image" />
+                <NeonTextarea value={fixPrompt} onChange={setFixPrompt}
+                  placeholder="What needs fixing... e.g. fix the hands, sharpen face, remove blur, fix unnatural skin" />
+                <NeonButton onClick={fixAIImage} loading={loading} disabled={!fixImage}>
+                  {loading ? "RECONSTRUCTING..." : "RECONSTRUCT"}
+                </NeonButton>
+              </Panel>
             </div>
-
             <div className="lg:col-span-2">
-              {loading && fixResults.length === 0 && <LoadingSkeleton />}
+              {loading && fixResults.length === 0 && <Skeleton />}
               <GeneratedGallery images={fixResults} />
-              {!loading && fixResults.length === 0 && (
-                <EmptyState message="Upload a bad AI image and let the fixer clean it up" />
-              )}
+              {!loading && fixResults.length === 0 && <Empty label="REPAIR" msg="Upload a damaged image to begin reconstruction" />}
             </div>
           </div>
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-[#2a2a2a] mt-16 py-8 text-center">
-        <p className="text-xs text-[#7a756e]">
-          <span className="text-[#c9a96e]">Second Me Academy</span> — Build
-          assets. Stack leverage. Get paid.
-        </p>
+      {/* ── Footer ── */}
+      <footer className="relative border-t mt-20 py-8" style={{ borderColor: "rgba(0,240,255,0.08)", zIndex: 1 }}>
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+          <span className="text-[10px] tracking-[0.3em] uppercase glow-cyan font-black">AURA</span>
+          <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(255,255,255,0.15)" }}>
+            Identity is a signal. Amplify yours.
+          </span>
+        </div>
       </footer>
     </div>
   );
 }
 
-function LoadingSkeleton({ count = 2 }: { count?: number }) {
+/* ── Sub-components ── */
+
+function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <div className="glass rounded-xl p-6 space-y-5 corner-bracket" style={{ borderColor: "rgba(0,240,255,0.12)" }}>
+      <div>
+        <h2 className="text-sm font-black tracking-[0.3em] glow-cyan">{title}</h2>
+        <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.3)" }}>{subtitle}</p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <label className="block text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "rgba(0,240,255,0.7)" }}>
+      {children}
+    </label>
+  );
+}
+
+function NeonTextarea({ value, onChange, placeholder, rows = 3 }: { value: string; onChange: (v: string) => void; placeholder: string; rows?: number }) {
+  return (
+    <div className="space-y-1.5">
+      <Label>Directive</Label>
+      <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows}
+        className="input-neon w-full rounded px-4 py-3 text-sm resize-none" />
+    </div>
+  );
+}
+
+function NeonButton({ children, onClick, loading, disabled }: { children: React.ReactNode; onClick: () => void; loading?: boolean; disabled?: boolean }) {
+  return (
+    <button onClick={onClick} disabled={loading || disabled} className="btn-primary w-full py-3.5 rounded tracking-widest">
+      {children}
+    </button>
+  );
+}
+
+function Skeleton({ count = 2 }: { count?: number }) {
   return (
     <div className="gallery-grid">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="shimmer aspect-square rounded-lg" />
+        <div key={i} className="shimmer-neon aspect-square rounded-lg" />
       ))}
     </div>
   );
 }
 
-function EmptyState({ message }: { message: string }) {
+function Empty({ label, msg }: { label: string; msg: string }) {
   return (
-    <div className="flex items-center justify-center h-64 border border-dashed border-[#2a2a2a] rounded-xl">
-      <div className="text-center space-y-2">
-        <div className="text-3xl opacity-20">&#9670;</div>
-        <p className="text-sm text-[#7a756e]">{message}</p>
+    <div className="flex items-center justify-center h-72 rounded-xl border" style={{ borderColor: "rgba(0,240,255,0.08)", background: "rgba(0,240,255,0.01)" }}>
+      <div className="text-center space-y-3">
+        <div className="text-[10px] tracking-[0.4em] uppercase glow-cyan font-black opacity-30">{label}</div>
+        <p className="text-xs tracking-widest" style={{ color: "rgba(255,255,255,0.2)" }}>{msg}</p>
       </div>
     </div>
   );
