@@ -3,43 +3,42 @@
 interface StyleSelectorProps {
   selected: string;
   onSelect: (style: string) => void;
-  styles?: Array<{ id: string; label: string; desc: string }>;
 }
 
-const defaultStyles = [
-  { id: "luxury", label: "Luxury", desc: "High-end, editorial, aspirational" },
-  { id: "professional", label: "Professional", desc: "Clean, corporate, polished" },
-  { id: "editorial", label: "Editorial", desc: "Fashion-forward, dramatic" },
-  { id: "glamour", label: "Glamour", desc: "Full glam, red carpet energy" },
-  { id: "streetwear", label: "Streetwear", desc: "Urban, trendy, bold" },
-  { id: "minimalist", label: "Minimalist", desc: "Clean, understated, elegant" },
-  { id: "anime", label: "Anime", desc: "Japanese art style, vibrant" },
-  { id: "3d-render", label: "3D Render", desc: "Pixar/Disney quality character" },
+const styles = [
+  { id: "luxury", label: "LUXURY", desc: "Opulent & aspirational" },
+  { id: "editorial", label: "EDITORIAL", desc: "Fashion-forward, dramatic" },
+  { id: "professional", label: "EXEC", desc: "Clean corporate power" },
+  { id: "glamour", label: "GLAM", desc: "Full red carpet" },
+  { id: "streetwear", label: "STREET", desc: "Urban, bold, raw" },
+  { id: "minimalist", label: "VOID", desc: "Pure negative space" },
+  { id: "anime", label: "ANIME", desc: "Japanese art style" },
+  { id: "3d-render", label: "3D CGI", desc: "Rendered character" },
 ];
 
-export default function StyleSelector({
-  selected,
-  onSelect,
-  styles = defaultStyles,
-}: StyleSelectorProps) {
+export default function StyleSelector({ selected, onSelect }: StyleSelectorProps) {
   return (
-    <div className="space-y-3">
-      <label className="block text-sm font-medium text-[#c9a96e]">
-        Style Preset
+    <div className="space-y-2">
+      <label className="block text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "rgba(0,240,255,0.7)" }}>
+        Style Matrix
       </label>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {styles.map((style) => (
+      <div className="grid grid-cols-2 gap-1.5">
+        {styles.map(style => (
           <button
             key={style.id}
             onClick={() => onSelect(style.id)}
-            className={`p-3 rounded-lg border text-left transition-all ${
+            className={`p-2.5 rounded border text-left transition-all ${
               selected === style.id
-                ? "border-[#c9a96e] bg-[#c9a96e]/10 text-white"
-                : "border-[#2a2a2a] bg-[#141414] text-[#7a756e] hover:border-[#3a3a3a]"
+                ? "tab-active border-[#00f0ff]"
+                : "glass border-transparent hover:border-[rgba(0,240,255,0.15)] hover:bg-[rgba(0,240,255,0.02)]"
             }`}
           >
-            <div className="text-sm font-medium">{style.label}</div>
-            <div className="text-xs mt-0.5 opacity-70">{style.desc}</div>
+            <div className={`text-[10px] font-black tracking-widest ${selected === style.id ? "text-[#00f0ff]" : "text-white/50"}`}>
+              {style.label}
+            </div>
+            <div className={`text-[9px] mt-0.5 ${selected === style.id ? "text-[rgba(0,240,255,0.5)]" : "text-white/20"}`}>
+              {style.desc}
+            </div>
           </button>
         ))}
       </div>

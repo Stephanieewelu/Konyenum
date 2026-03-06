@@ -8,100 +8,66 @@ interface ImageUploadProps {
   label?: string;
 }
 
-export default function ImageUpload({
-  onImageSelect,
-  currentImage,
-  label = "Upload a reference photo",
-}: ImageUploadProps) {
+export default function ImageUpload({ onImageSelect, currentImage, label = "Upload" }: ImageUploadProps) {
   const [dragOver, setDragOver] = useState(false);
 
-  const handleFile = useCallback(
-    (file: File) => {
-      if (!file.type.startsWith("image/")) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onImageSelect(result);
-      };
-      reader.readAsDataURL(file);
-    },
-    [onImageSelect]
-  );
+  const handleFile = useCallback((file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = e => onImageSelect(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }, [onImageSelect]);
 
-  const handleDrop = useCallback(
-    (e: DragEvent) => {
-      e.preventDefault();
-      setDragOver(false);
-      const file = e.dataTransfer.files[0];
-      if (file) handleFile(file);
-    },
-    [handleFile]
-  );
+  const handleDrop = useCallback((e: DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
 
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) handleFile(file);
-    },
-    [handleFile]
-  );
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
 
   return (
-    <div className="space-y-3">
-      <label className="block text-sm font-medium text-[#c9a96e]">
+    <div className="space-y-2">
+      <label className="block text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "rgba(0,240,255,0.7)" }}>
         {label}
       </label>
 
       {currentImage ? (
         <div className="relative group">
-          <img
-            src={currentImage}
-            alt="Reference"
-            className="w-full max-w-xs rounded-lg border border-[#2a2a2a] object-cover aspect-square"
-          />
-          <button
-            onClick={() => onImageSelect("")}
-            className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            Remove
+          <img src={currentImage} alt="Reference"
+            className="w-full max-w-[200px] rounded-lg object-cover aspect-square"
+            style={{ border: "1px solid rgba(0,240,255,0.3)", boxShadow: "0 0 12px rgba(0,240,255,0.15)" }} />
+          <button onClick={() => onImageSelect("")}
+            className="absolute top-1 right-1 w-6 h-6 rounded flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ background: "rgba(0,0,0,0.8)", border: "1px solid rgba(255,0,168,0.4)", color: "#ff00a8" }}>
+            ×
           </button>
+          <div className="mt-1 text-[9px] tracking-widest uppercase" style={{ color: "rgba(0,240,255,0.4)" }}>
+            ◈ LOADED
+          </div>
         </div>
       ) : (
         <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
+          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
-          className={`drop-zone rounded-lg p-8 text-center cursor-pointer ${
-            dragOver ? "drag-over" : ""
-          }`}
-          onClick={() => document.getElementById("file-input")?.click()}
+          onClick={() => document.getElementById("aura-file-input")?.click()}
+          className={`drop-zone rounded-lg p-6 text-center cursor-pointer ${dragOver ? "drag-over" : ""}`}
         >
-          <input
-            id="file-input"
-            type="file"
-            accept="image/*"
-            onChange={handleChange}
-            className="hidden"
-          />
-          <div className="text-[#7a756e] space-y-2">
-            <svg
-              className="mx-auto h-10 w-10"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
+          <input id="aura-file-input" type="file" accept="image/*" onChange={handleChange} className="hidden" />
+          <div className="space-y-2">
+            {/* Upload icon */}
+            <svg className="mx-auto h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="rgba(0,240,255,0.4)" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p className="text-sm">Drag & drop your photo here or click to browse</p>
-            <p className="text-xs text-[#555]">PNG, JPG up to 10MB</p>
+            <p className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(0,240,255,0.4)" }}>
+              Drop image or click to upload
+            </p>
+            <p className="text-[9px]" style={{ color: "rgba(255,255,255,0.15)" }}>PNG · JPG · up to 10MB</p>
           </div>
         </div>
       )}
